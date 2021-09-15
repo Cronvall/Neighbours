@@ -4,7 +4,7 @@ from random import *
 
 import pygame as pg
 
-#test
+
 
 #  Program to simulate segregation.
 #  See : http:#nifty.stanford.edu/2014/mccown-schelling-model-segregation/
@@ -102,6 +102,9 @@ class NeighborsModel:
 
 
 # ---------------- Helper methods ---------------------
+def create_world(size: int):
+    new_world = [[Actor.NONE] * size for i in range(size)]
+    return new_world
 
 # Check if inside world
 def is_valid_location(size: int, row: int, col: int):
