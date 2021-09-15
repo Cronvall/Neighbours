@@ -4,6 +4,7 @@ from random import *
 
 import pygame as pg
 
+#test
 
 #  Program to simulate segregation.
 #  See : http:#nifty.stanford.edu/2014/mccown-schelling-model-segregation/
