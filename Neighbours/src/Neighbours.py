@@ -5,6 +5,7 @@ from random import *
 import pygame as pg
 
 
+
 #  Program to simulate segregation.
 #  See : http:#nifty.stanford.edu/2014/mccown-schelling-model-segregation/
 #
@@ -15,6 +16,8 @@ class Actor(Enum):
     RED = auto()
     NONE = auto()  # NONE used for empty locations
 
+    def __init__(self):
+        self.Neighbours :[[]]= [[]] #Row, Col
 
 # Enumeration type for the state of an Actor
 class State(Enum):
@@ -25,8 +28,12 @@ class State(Enum):
 
 World = List[List[Actor]]  # Type alias
 
+
 SIZE = 30
 
+#Suroundings scan logic
+def read_suroudings():
+    pass
 
 def neighbours():
     pg.init()
@@ -36,10 +43,11 @@ def neighbours():
 
 
 class NeighborsModel:
+
     # Tune these numbers to test different distributions or update speeds
-    FRAME_RATE = 20  # Increase number to speed simulation up
+    FRAME_RATE = 20            # Increase number to speed simulation up
     DIST = [0.25, 0.25, 0.50]  # % of RED, BLUE, and NONE
-    THRESHOLD = 0.7  # % of surrounding neighbours that should be like me for satisfaction
+    THRESHOLD = 0.7            # % of surrounding neighbours that should be like me for satisfaction
 
     # ########### These following two methods are what you're supposed to implement  ###########
     # In this method you should generate a new world
@@ -103,27 +111,6 @@ def create_world(size: int):
     new_world = [[Actor.NONE] * size for i in range(size)]
     return new_world
 
-
-def randomize_location(tot_spawns: int):
-    size = int(square(tot_spawns))
-
-
-def populate_individual_cell(world: list, red_spawns: int, blue_spawns: int, tot_spawns: int):
-    i = 0
-    j = 0
-    while i < red_spawns - 1 and j < blue_spawns - 1:
-           pass
-
-#TEST
-
-def populate_world(world: list, distribution: list, tot_spawns: int):
-    # Distribution = [Red, blue, none]
-    red_spawns: int = int(distribution[0])
-    blue_spawns: int = int(distribution[1])
-
-    pass
-
-
 # Check if inside world
 def is_valid_location(size: int, row: int, col: int):
     return 0 <= row < size and 0 <= col < size
@@ -167,13 +154,13 @@ def count(a_list, to_find):
 # ... but by all means have a look at it, it's fun!
 class NeighboursView:
     # static class variables
-    WIDTH = 400  # Size for window
+    WIDTH = 400   # Size for window
     HEIGHT = 400
     MARGIN = 50
 
     WHITE = (255, 255, 255)
-    RED = (255, 0, 0)
-    BLUE = (0, 0, 255)
+    RED   = (255,   0,   0)
+    BLUE  = (  0,   0, 255)
 
     # Instance methods
 
