@@ -49,8 +49,8 @@ class NeighborsModel:
     @staticmethod
     def __create_world(size) -> World:
         # TODO Create and populate world according to self.DIST distribution parameters
-        brave_new_world = create_world(30)
-        populate_world(brave_new_world, NeighborsModel.DIST, int(30*30))
+        brave_new_world = create_world(size)
+        populate_world(brave_new_world, NeighborsModel.DIST, int(size * size))
         return brave_new_world
 
     # This is the method called by the timer to update the world
@@ -129,7 +129,6 @@ def populate_individual_cell(world: list, n_spawns: int, tot_spawns: int, colour
                 i -= 1
             else:
                 world[x][y] = Actor.BLUE
-
 
 
 def populate_world(world: list, distribution: list, tot_spawns: int):
