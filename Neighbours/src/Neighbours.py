@@ -1,3 +1,4 @@
+import math
 from typing import List
 from enum import Enum, auto
 from random import *
@@ -105,7 +106,7 @@ def create_world(size: int):
 
 
 def randomize_location(tot_spawns: int):
-    size = int(square(tot_spawns))
+    size = int(math.sqrt(tot_spawns))
 
 
 def populate_individual_cell(world: list, red_spawns: int, blue_spawns: int, tot_spawns: int):
@@ -114,7 +115,7 @@ def populate_individual_cell(world: list, red_spawns: int, blue_spawns: int, tot
     while i < red_spawns - 1 and j < blue_spawns - 1:
            pass
 
-#TEST
+
 
 def populate_world(world: list, distribution: list, tot_spawns: int):
     # Distribution = [Red, blue, none]
