@@ -1,3 +1,5 @@
+import random
+import math
 from typing import List
 from enum import Enum, auto
 from random import *
@@ -47,7 +49,8 @@ class NeighborsModel:
     @staticmethod
     def __create_world(size) -> World:
         # TODO Create and populate world according to self.DIST distribution parameters
-        brave_new_world = []
+        brave_new_world = create_world(30)
+        populate_world(brave_new_world, NeighborsModel.DIST, 900)
         return brave_new_world
 
     # This is the method called by the timer to update the world
@@ -105,21 +108,36 @@ def create_world(size: int):
 
 
 def randomize_location(tot_spawns: int):
-    size = int(square(tot_spawns))
+    size = int(math.sqrt(tot_spawns))
+    random_position: int = random.randint(0, size - 1)
+    return random_position
 
 
-def populate_individual_cell(world: list, red_spawns: int, blue_spawns: int, tot_spawns: int):
+def populate_individual_cell(world: list, n_spawns: int, tot_spawns: int, colour):
     i = 0
-    j = 0
-    while i < red_spawns - 1 and j < blue_spawns - 1:
-           pass
+    while i < n_spawns - 1:
+        x = randomize_location(tot_spawns)
+        y = randomize_location(tot_spawns)
 
-#TEST
+        if colour == "red":
+            if world[x][y] == Actor.NONE:
+                world[x][y] = Actor.RED
+            else:
+                i -= 1
+        elif colour == "blue":
+            if world[x][y] == Actor.NONE:
+                world[x][y] = Actor.BLUE
+            else:
+                i -= 1
+
 
 def populate_world(world: list, distribution: list, tot_spawns: int):
     # Distribution = [Red, blue, none]
-    red_spawns: int = int(distribution[0])
-    blue_spawns: int = int(distribution[1])
+    red_spawns: int = int(distribution[0] * tot_spawns)
+    blue_spawns: int = int(distribution[1] * tot_spawns)
+
+    populate_individual_cell(world, red_spawns, tot_spawns, "red")
+    populate_individual_cell(world, blue_spawns, tot_spawns, "blue")
 
     pass
 
@@ -235,4 +253,4 @@ class NeighboursView:
 
 
 if __name__ == "__main__":
-    test()
+    neighbours()
