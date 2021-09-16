@@ -1,9 +1,10 @@
+import math
+import random
 from typing import List
 from enum import Enum, auto
 from random import *
 
 import pygame as pg
-
 
 
 #  Program to simulate segregation.
@@ -16,8 +17,6 @@ class Actor(Enum):
     RED = auto()
     NONE = auto()  # NONE used for empty locations
 
-    def __init__(self):
-        self.Neighbours = [[]] #Row, Col
 
 # Enumeration type for the state of an Actor
 class State(Enum):
@@ -28,13 +27,8 @@ class State(Enum):
 
 World = List[List[Actor]]  # Type alias
 
-
 SIZE = 30
 
-#Suroundings scan logic
-def read_suroudings(row_index: int, col_index: int):
-    read_row(row_index + 1, col_index -1, 3)
-    pass
 
 #Reads n elements in a row starting at start_index. 
 #Ex.(12, 3) reads the elements 12,13,14
@@ -54,11 +48,10 @@ def neighbours():
 
 
 class NeighborsModel:
-
     # Tune these numbers to test different distributions or update speeds
-    FRAME_RATE = 20            # Increase number to speed simulation up
+    FRAME_RATE = 20  # Increase number to speed simulation up
     DIST = [0.25, 0.25, 0.50]  # % of RED, BLUE, and NONE
-    THRESHOLD = 0.7            # % of surrounding neighbours that should be like me for satisfaction
+    THRESHOLD = 0.7  # % of surrounding neighbours that should be like me for satisfaction
 
     # ########### These following two methods are what you're supposed to implement  ###########
     # In this method you should generate a new world
@@ -66,7 +59,8 @@ class NeighborsModel:
     @staticmethod
     def __create_world(size) -> World:
         # TODO Create and populate world according to self.DIST distribution parameters
-        brave_new_world = []
+        brave_new_world = create_world(30)
+        populate_world(brave_new_world, NeighborsModel.DIST, int(30*30))
         return brave_new_world
 
     # This is the method called by the timer to update the world
@@ -122,6 +116,40 @@ def create_world(size: int):
     new_world = [[Actor.NONE] * size for i in range(size)]
     return new_world
 
+
+def randomize_location(tot_spawns: int):
+    world_size = int(math.sqrt(tot_spawns))
+    position = random.randint(0, world_size - 1)
+    return position
+
+
+def populate_individual_cell(world: list, n_spawns: int, tot_spawns: int, colour):
+    i = 0
+    while i < n_spawns:
+        x = randomize_location(tot_spawns)
+        y = randomize_location(tot_spawns)
+        if colour == "red":
+            if world[x][y] == Actor.NONE:
+                world[x][y] = Actor.RED
+                i += 1
+            else:
+                i -= 1
+        if colour == "blue":
+            if world[x][y] == Actor.NONE:
+                world[x][y] = Actor.BLUE
+                i += 1
+            else:
+                i -= 1
+
+
+def populate_world(world: list, distribution: list, tot_spawns: int):
+    # Distribution = [Red, blue, none]
+    red_spawns: int = int(distribution[0] * tot_spawns)
+    blue_spawns: int = int(distribution[1] * tot_spawns)
+
+    populate_individual_cell(world, red_spawns, tot_spawns, "red")
+    populate_individual_cell(world, blue_spawns, tot_spawns, "blue")
+
 # Check if inside world
 def is_valid_location(size: int, row: int, col: int):
     return 0 <= row < size and 0 <= col < size
@@ -165,13 +193,13 @@ def count(a_list, to_find):
 # ... but by all means have a look at it, it's fun!
 class NeighboursView:
     # static class variables
-    WIDTH = 400   # Size for window
+    WIDTH = 400  # Size for window
     HEIGHT = 400
     MARGIN = 50
 
     WHITE = (255, 255, 255)
-    RED   = (255,   0,   0)
-    BLUE  = (  0,   0, 255)
+    RED = (255, 0, 0)
+    BLUE = (0, 0, 255)
 
     # Instance methods
 
@@ -233,4 +261,4 @@ class NeighboursView:
 
 
 if __name__ == "__main__":
-    test()
+    neighbours()
