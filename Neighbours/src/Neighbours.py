@@ -118,18 +118,18 @@ def populate_individual_cell(world: list, n_spawns: int, tot_spawns: int, colour
     while i < n_spawns:
         x = randomize_location(tot_spawns)
         y = randomize_location(tot_spawns)
+        i += 1
         if colour == "red":
-            if world[x][y] == Actor.NONE:
+            if world[x][y] == Actor.RED or world[x][y] == Actor.BLUE:
+                i -= 1
+            else:
                 world[x][y] = Actor.RED
-                i += 1
-            elif world[x][y] == Actor.RED or world[x][y] == Actor.BLUE:
-                i -= 1
         if colour == "blue":
-            if world[x][y] == Actor.NONE:
-                world[x][y] = Actor.BLUE
-                i += 1
-            elif world[x][y] == Actor.RED or world[x][y] == Actor.BLUE:
+            if world[x][y] == Actor.RED or world[x][y] == Actor.BLUE:
                 i -= 1
+            else:
+                world[x][y] = Actor.BLUE
+
 
 
 def populate_world(world: list, distribution: list, tot_spawns: int):
@@ -139,6 +139,10 @@ def populate_world(world: list, distribution: list, tot_spawns: int):
 
     populate_individual_cell(world, red_spawns, tot_spawns, "red")
     populate_individual_cell(world, blue_spawns, tot_spawns, "blue")
+
+    print("hello")
+    for row in world:
+        print(row)
 
 
 # Check if inside world
