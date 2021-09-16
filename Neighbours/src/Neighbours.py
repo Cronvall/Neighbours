@@ -2,7 +2,7 @@ import math
 import random
 from typing import List
 from enum import Enum, auto
-from random import *
+
 
 import pygame as pg
 
@@ -119,7 +119,7 @@ def create_world(size: int):
 
 def randomize_location(tot_spawns: int):
     world_size = int(math.sqrt(tot_spawns))
-    position = random.randint(0, world_size - 1)
+    position = random.randint(0, (world_size - 1))
     return position
 
 
@@ -132,13 +132,13 @@ def populate_individual_cell(world: list, n_spawns: int, tot_spawns: int, colour
             if world[x][y] == Actor.NONE:
                 world[x][y] = Actor.RED
                 i += 1
-            else:
+            elif world[x][y] == Actor.RED or world[x][y] == Actor.BLUE:
                 i -= 1
         if colour == "blue":
             if world[x][y] == Actor.NONE:
                 world[x][y] = Actor.BLUE
                 i += 1
-            else:
+            elif world[x][y] == Actor.RED or world[x][y] == Actor.BLUE:
                 i -= 1
 
 
@@ -150,11 +150,10 @@ def populate_world(world: list, distribution: list, tot_spawns: int):
     populate_individual_cell(world, red_spawns, tot_spawns, "red")
     populate_individual_cell(world, blue_spawns, tot_spawns, "blue")
 
+
 # Check if inside world
 def is_valid_location(size: int, row: int, col: int):
     return 0 <= row < size and 0 <= col < size
-
-
 # ------- Testing -------------------------------------
 
 # Here you run your tests i.e. call your logic methods
