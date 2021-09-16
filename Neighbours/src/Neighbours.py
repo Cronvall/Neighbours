@@ -17,7 +17,7 @@ class Actor(Enum):
     NONE = auto()  # NONE used for empty locations
 
     def __init__(self):
-        self.Neighbours :[[]]= [[]] #Row, Col
+        self.Neighbours = [[]] #Row, Col
 
 # Enumeration type for the state of an Actor
 class State(Enum):
@@ -32,8 +32,19 @@ World = List[List[Actor]]  # Type alias
 SIZE = 30
 
 #Suroundings scan logic
-def read_suroudings():
+def read_suroudings(row_index: int, col_index: int):
+    read_row(row_index + 1, col_index -1, 3)
     pass
+
+#Reads n elements in a row starting at start_index. 
+#Ex.(12, 3) reads the elements 12,13,14
+def read_row(row_index: int, col_index,n: int):
+    row = []
+    for x in range(n):
+        row.append(World[row_index[col_index + x]])
+        print(row)
+    return row
+
 
 def neighbours():
     pg.init()
@@ -127,7 +138,7 @@ def test():
         [Actor.NONE, Actor.BLUE, Actor.NONE],
         [Actor.RED, Actor.NONE, Actor.BLUE]
     ]
-
+    print(Actor.BLUE)
     th = 0.5  # Simpler threshold used for testing
 
     size = len(test_world)
