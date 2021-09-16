@@ -114,7 +114,7 @@ def populate_individual_cell(world: list, red_spawns: int, blue_spawns: int, tot
     while i < red_spawns - 1 and j < blue_spawns - 1:
            pass
 
-
+#TEST
 
 def populate_world(world: list, distribution: list, tot_spawns: int):
     # Distribution = [Red, blue, none]
