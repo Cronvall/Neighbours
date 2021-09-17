@@ -42,12 +42,12 @@ def read_row(row_index: int, col_index,n: int):
 
 def neighbours():
     pg.init()
-    model = NeighborsModel(SIZE)
+    model = NeighboursModel(SIZE)
     _view = NeighboursView(model)
     model.run()
 
 
-class NeighborsModel:
+class NeighboursModel:
     # Tune these numbers to test different distributions or update speeds
     FRAME_RATE = 20  # Increase number to speed simulation up
     DIST = [0.25, 0.25, 0.50]  # % of RED, BLUE, and NONE
@@ -60,7 +60,7 @@ class NeighborsModel:
     def __create_world(size) -> World:
         # TODO Create and populate world according to self.DIST distribution parameters
         brave_new_world = create_world(30)
-        populate_world(brave_new_world, NeighborsModel.DIST, int(30*30))
+        populate_world(brave_new_world, NeighboursModel.DIST, int(30 * 30))
         return brave_new_world
 
     # This is the method called by the timer to update the world
@@ -141,14 +141,43 @@ def populate_individual_cell(world: list, n_spawns: int, tot_spawns: int, colour
             elif world[x][y] == Actor.RED or world[x][y] == Actor.BLUE:
                 i -= 1
 
+#Adds a color (Enum state) to each cell in the world
+def populate_individual_cell_2(world: list, row_count, col_count):
+
+    for x in range(row_count):
+        for y in range(col_count):
+            newColor = setColor(NeighboursModel.DIST[1],NeighboursModel.DIST[2])
+            #TODO Implement a function that checks for the cap colors either here or in setColor()
+            world[y][x] = newColor
+
+def setColor(odds_red, odds_blue):
+    odds_none = 1.00 - odds_red - odds_blue
+    totOdds = odds_red + odds_blue + odds_none
+    setCap(odds_red, odds_blue, odds_none)
+    if totOdds > 1.00:
+        print("The total odds is greater then 100%, please edit input")
+        pass
+    else:
+        result = random.randint(0,99) / 100
+        if result < odds_none:
+            return Actor.NONE
+        elif result >= odds_none and result < (odds_none + odds_red):
+            return  Actor.RED
+        else:
+            return  Actor.BLUE
+
+def setCap(odds_red, odds_blue, odds_none):
+    none_cap = int(odds_none * 100)
+    red_cap = int(odds_red *100)
+    blue_cap = int(odds_blue * 100)
 
 def populate_world(world: list, distribution: list, tot_spawns: int):
     # Distribution = [Red, blue, none]
     red_spawns: int = int(distribution[0] * tot_spawns)
     blue_spawns: int = int(distribution[1] * tot_spawns)
-
-    populate_individual_cell(world, red_spawns, tot_spawns, "red")
-    populate_individual_cell(world, blue_spawns, tot_spawns, "blue")
+    populate_individual_cell_2(world, 30,30)
+    #populate_individual_cell(world, red_spawns, tot_spawns, "red")
+    #populate_individual_cell(world, blue_spawns, tot_spawns, "blue")
 
 
 # Check if inside world
@@ -202,7 +231,7 @@ class NeighboursView:
 
     # Instance methods
 
-    def __init__(self, model: NeighborsModel):
+    def __init__(self, model: NeighboursModel):
         pg.init()  # initialize pygame, in case not already done
         self.dot_size = self.__calculate_dot_size(len(model.world))
         self.screen = pg.display.set_mode([self.WIDTH, self.HEIGHT])
