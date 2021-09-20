@@ -50,7 +50,7 @@ def neighbours():
 class NeighboursModel:
     # Tune these numbers to test different distributions or update speeds
     FRAME_RATE = 20  # Increase number to speed simulation up
-    DIST = [0.25, 0.25, 0.50]  # % of RED, BLUE, and NONE
+    DIST = [0.4, 0.4, 0.20]  # % of RED, BLUE, and NONE
     THRESHOLD = 0.7  # % of surrounding neighbours that should be like me for satisfaction
 
     # ########### These following two methods are what you're supposed to implement  ###########
@@ -123,63 +123,33 @@ def randomize_location(tot_spawns: int):
     return position
 
 
-def populate_individual_cell(world: list, n_spawns: int, tot_spawns: int, colour):
-    i = 0
-    while i < n_spawns:
-        x = randomize_location(tot_spawns)
-        y = randomize_location(tot_spawns)
-        i += 1
-        if colour == "red":
-            if world[x][y] == Actor.RED or world[x][y] == Actor.BLUE:
-                i -= 1
-            else:
-                world[x][y] = Actor.RED
-        if colour == "blue":
-            if world[x][y] == Actor.RED or world[x][y] == Actor.BLUE:
-                i -= 1
-            else:
-                world[x][y] = Actor.BLUE
+def populate_individual_cell(world: list,dist: list):
+    n = SIZE * SIZE
+    blue_amt = int(dist[0] * n)
+    red_amt = int(dist[1] * n)
+    none_amt = n - red_amt - blue_amt
 
-#Adds a color (Enum state) to each cell in the world
-def populate_individual_cell_2(world: list, row_count, col_count):
+    for row in range(SIZE):
+        for col in range(SIZE):
+            if blue_amt > 0:
+                world[row][col] = Actor.BLUE
+                blue_amt -= 1
+            elif blue_amt == 0 and red_amt > 0:
+                world[row][col] = Actor.RED
+                red_amt -= 1
+            elif blue_amt == 0 and red_amt == 0:
+                world[row][col] = Actor.NONE
+            random.shuffle(world)
+            random.shuffle(world[row])
+        random.shuffle(world)
 
-    for x in range(row_count):
-        for y in range(col_count):
-            newColor = setColor(NeighboursModel.DIST[1],NeighboursModel.DIST[2])
-            #TODO Implement a function that checks for the cap colors either here or in setColor()
-            world[y][x] = newColor
-
-def setColor(odds_red, odds_blue):
-    odds_none = 1.00 - odds_red - odds_blue
-    totOdds = odds_red + odds_blue + odds_none
-    setCap(odds_red, odds_blue, odds_none)
-    if totOdds > 1.00:
-        print("The total odds is greater then 100%, please edit input")
-        pass
-    else:
-        result = random.randint(0,99) / 100
-        if result < odds_none:
-            return Actor.NONE
-        elif result >= odds_none and result < (odds_none + odds_red):
-            return  Actor.RED
-        else:
-            return  Actor.BLUE
-
-def setCap(odds_red, odds_blue, odds_none):
-    none_cap = int(odds_none * 100)
-    red_cap = int(odds_red *100)
-    blue_cap = int(odds_blue * 100)
 
 def populate_world(world: list, distribution: list, tot_spawns: int):
     # Distribution = [Red, blue, none]
-    red_spawns: int = int(distribution[0] * tot_spawns)
-    blue_spawns: int = int(distribution[1] * tot_spawns)
-    populate_individual_cell_2(world, 30,30)
-    #populate_individual_cell(world, red_spawns, tot_spawns, "red")
-    #populate_individual_cell(world, blue_spawns, tot_spawns, "blue")
+    populate_individual_cell(world, distribution)
 
-    print("hello")
     for row in world:
+        random.shuffle(world)
         print(row)
 
 
