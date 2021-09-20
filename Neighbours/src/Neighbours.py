@@ -3,7 +3,6 @@ import random
 from typing import List
 from enum import Enum, auto
 
-
 import pygame as pg
 
 
@@ -30,9 +29,9 @@ World = List[List[Actor]]  # Type alias
 SIZE = 30
 
 
-#Reads n elements in a row starting at start_index. 
-#Ex.(12, 3) reads the elements 12,13,14
-def read_row(row_index: int, col_index,n: int):
+# Reads n elements in a row starting at start_index.
+# Ex.(12, 3) reads the elements 12,13,14
+def read_row(row_index: int, col_index, n: int):
     row = []
     for x in range(n):
         row.append(World[row_index[col_index + x]])
@@ -140,14 +139,15 @@ def populate_individual_cell(world: list, n_spawns: int, tot_spawns: int, colour
             else:
                 world[x][y] = Actor.BLUE
 
-#Adds a color (Enum state) to each cell in the world
-def populate_individual_cell_2(world: list, row_count, col_count):
 
+# Adds a color (Enum state) to each cell in the world
+def populate_individual_cell_2(world: list, row_count, col_count):
     for x in range(row_count):
         for y in range(col_count):
-            newColor = setColor(NeighboursModel.DIST[1],NeighboursModel.DIST[2])
-            #TODO Implement a function that checks for the cap colors either here or in setColor()
+            newColor = setColor(NeighboursModel.DIST[1], NeighboursModel.DIST[2])
+            # TODO Implement a function that checks for the cap colors either here or in setColor()
             world[y][x] = newColor
+
 
 def setColor(odds_red, odds_blue):
     odds_none = 1.00 - odds_red - odds_blue
@@ -157,35 +157,57 @@ def setColor(odds_red, odds_blue):
         print("The total odds is greater then 100%, please edit input")
         pass
     else:
-        result = random.randint(0,99) / 100
+        result = random.randint(0, 99) / 100
         if result < odds_none:
             return Actor.NONE
         elif result >= odds_none and result < (odds_none + odds_red):
-            return  Actor.RED
+            return Actor.RED
         else:
-            return  Actor.BLUE
+            return Actor.BLUE
+
 
 def setCap(odds_red, odds_blue, odds_none):
     none_cap = int(odds_none * 100)
-    red_cap = int(odds_red *100)
+    red_cap = int(odds_red * 100)
     blue_cap = int(odds_blue * 100)
+
 
 def populate_world(world: list, distribution: list, tot_spawns: int):
     # Distribution = [Red, blue, none]
     red_spawns: int = int(distribution[0] * tot_spawns)
     blue_spawns: int = int(distribution[1] * tot_spawns)
-    populate_individual_cell_2(world, 30,30)
-    #populate_individual_cell(world, red_spawns, tot_spawns, "red")
-    #populate_individual_cell(world, blue_spawns, tot_spawns, "blue")
+    populate_individual_cell_2(world, 30, 30)
+    # populate_individual_cell(world, red_spawns, tot_spawns, "red")
+    # populate_individual_cell(world, blue_spawns, tot_spawns, "blue")
 
     print("hello")
     for row in world:
         print(row)
 
 
+def count_neighbors(world: list, i: int, j: int, choice: Actor):
+    if world[i][j] == choice:
+        tot_sum = -1
+    else:
+        tot_sum = 0
+
+    for k in range(i - 1, i + 2):
+        for l in range(j - 1, j + 2):
+            if k + 1 > len(world) or k < 0:
+                pass
+            elif l + 1 > len(world) or l < 0:
+                pass
+            elif world[k][l] == choice:
+                tot_sum += 1
+
+    return tot_sum
+
+
 # Check if inside world
 def is_valid_location(size: int, row: int, col: int):
     return 0 <= row < size and 0 <= col < size
+
+
 # ------- Testing -------------------------------------
 
 # Here you run your tests i.e. call your logic methods
@@ -207,6 +229,8 @@ def test():
     print(is_valid_location(size, 2, 2))
 
     # TODO More tests
+    test_search = count_neighbors(test_world, 0, 0, Actor.BLUE)
+    print(" there are this many : " + test_search)
 
     exit(0)
 
@@ -292,4 +316,5 @@ class NeighboursView:
 
 
 if __name__ == "__main__":
-    neighbours()
+    # neighbours()
+    test()

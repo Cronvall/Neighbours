@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="aedf92e5-d3b0-4dd3-a9eb-6e9ac89a697f" name="Changes" comment="Add of functions to read surroundings (not functioning functions just functions)">
+    <list default="true" id="dee89ece-0482-4448-acbf-b88e582fc4f0" name="Changes" comment="Add of functions to read surroundings (not functioning functions just functions)">
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2021-09-15__14_31__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2021-09-15__14_31__Changes_.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Neighbours/src/Neighbours.py" beforeDir="false" afterPath="$PROJECT_DIR$/Neighbours/src/Neighbours.py" afterDir="false" />
     </list>
@@ -58,7 +62,7 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="aedf92e5-d3b0-4dd3-a9eb-6e9ac89a697f" name="Changes" comment="" />
+      <changelist id="dee89ece-0482-4448-acbf-b88e582fc4f0" name="Changes" comment="Add of functions to read surroundings (not functioning functions just functions)" />
       <created>1631708109226</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -108,8 +112,5 @@
         </breakpoint>
       </default-breakpoints>
     </breakpoint-manager>
-  </component>
-  <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Neigbours$Neighbours.coverage" NAME="Neighbours Coverage Results" MODIFIED="1631816041999" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Neighbours/src" />
   </component>
 </project>
