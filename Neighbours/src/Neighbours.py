@@ -3,7 +3,6 @@ import random
 from typing import List
 from enum import Enum, auto
 
-
 import pygame as pg
 
 
@@ -30,9 +29,9 @@ World = List[List[Actor]]  # Type alias
 SIZE = 30
 
 
-#Reads n elements in a row starting at start_index. 
-#Ex.(12, 3) reads the elements 12,13,14
-def read_row(row_index: int, col_index,n: int):
+# Reads n elements in a row starting at start_index.
+# Ex.(12, 3) reads the elements 12,13,14
+def read_row(row_index: int, col_index, n: int):
     row = []
     for x in range(n):
         row.append(World[row_index[col_index + x]])
@@ -144,6 +143,7 @@ def populate_individual_cell(world: list,dist: list):
         random.shuffle(world)
 
 
+
 def populate_world(world: list, distribution: list, tot_spawns: int):
     # Distribution = [Red, blue, none]
     populate_individual_cell(world, distribution)
@@ -153,9 +153,29 @@ def populate_world(world: list, distribution: list, tot_spawns: int):
         print(row)
 
 
+def count_neighbors(world: list, i: int, j: int, choice: Actor):
+    if world[i][j] == choice:
+        tot_sum = -1
+    else:
+        tot_sum = 0
+
+    for k in range(i - 1, i + 2):
+        for l in range(j - 1, j + 2):
+            if k + 1 > len(world) or k < 0:
+                pass
+            elif l + 1 > len(world) or l < 0:
+                pass
+            elif world[k][l] == choice:
+                tot_sum += 1
+
+    return tot_sum
+
+
 # Check if inside world
 def is_valid_location(size: int, row: int, col: int):
     return 0 <= row < size and 0 <= col < size
+
+
 # ------- Testing -------------------------------------
 
 # Here you run your tests i.e. call your logic methods
@@ -177,6 +197,8 @@ def test():
     print(is_valid_location(size, 2, 2))
 
     # TODO More tests
+    test_search = count_neighbors(test_world, 0, 0, Actor.BLUE)
+    print(" there are this many : " + test_search)
 
     exit(0)
 
@@ -262,4 +284,5 @@ class NeighboursView:
 
 
 if __name__ == "__main__":
-    neighbours()
+    # neighbours()
+    test()
