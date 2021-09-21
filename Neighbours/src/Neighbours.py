@@ -122,7 +122,7 @@ def randomize_location(tot_spawns: int):
     return position
 
 
-def populate_individual_cell(world: list,dist: list):
+def populate_individual_cell(world: list, dist: list):
     n = SIZE * SIZE
     blue_amt = int(dist[0] * n)
     red_amt = int(dist[1] * n)
@@ -143,7 +143,6 @@ def populate_individual_cell(world: list,dist: list):
         random.shuffle(world)
 
 
-
 def populate_world(world: list, distribution: list, tot_spawns: int):
     # Distribution = [Red, blue, none]
     populate_individual_cell(world, distribution)
@@ -153,22 +152,44 @@ def populate_world(world: list, distribution: list, tot_spawns: int):
         print(row)
 
 
+# Counts specified Actor around given coordinate
 def count_neighbors(world: list, i: int, j: int, choice: Actor):
+    n_neighbors: int
+    # Make sure to not count the Actor at the specified coordinate
     if world[i][j] == choice:
-        tot_sum = -1
+        n_neighbors = -1
     else:
-        tot_sum = 0
+        n_neighbors = 0
 
     for k in range(i - 1, i + 2):
         for l in range(j - 1, j + 2):
-            if k + 1 > len(world) or k < 0:
-                pass
-            elif l + 1 > len(world) or l < 0:
-                pass
-            elif world[k][l] == choice:
-                tot_sum += 1
+            n_neighbors += control_coordinate(world, k, l, choice)
 
-    return tot_sum
+    return n_neighbors
+
+
+# OBS! Väldigt väldigt dåligt namn på metod nedanför
+# Makes sure that given coordinate is within list
+def control_coordinate(world: list, k: int, l: int, choice: Actor):
+    if k + 1 > len(world) or k < 0:
+        return 0
+    elif l + 1 > len(world) or l < 0:
+        return 0
+    # If within the world and att specified location. Add one to the count
+    elif world[k][l] == choice:
+        return 1
+    else:
+        return 0
+
+
+def copy_matrix(matrix_in: list):
+    copied_matrix = []
+
+    for i in range(len(matrix_in)):
+        for j in range(len(matrix_in[i])):
+            copied_matrix = matrix_in[i][j]
+
+    return copied_matrix
 
 
 # Check if inside world
@@ -197,8 +218,13 @@ def test():
     print(is_valid_location(size, 2, 2))
 
     # TODO More tests
-    test_search = count_neighbors(test_world, 0, 0, Actor.BLUE)
-    print(" there are this many : " + test_search)
+
+    # Counts the "NONE" Actors around position 1,1. Should be 4 as seen above
+    print(count_neighbors(test_world, 1, 1, Actor.NONE) == 4)
+    # Counts the "RED" Actors around position 1,0. Should be 3 as seen above
+    print(count_neighbors(test_world, 1, 0, Actor.RED) == 3)
+    # Counts the Red Actors in the list. This value should be 3
+    print(count(test_world, Actor.RED) == 3)
 
     exit(0)
 
@@ -206,12 +232,11 @@ def test():
 # Helper method for testing
 def count(a_list, to_find):
     the_count = 0
-    for a in a_list:
-        if a == to_find:
-            the_count += 1
+    for i in range(len(a_list)):
+        for a in a_list[i]:
+            if a == to_find:
+                the_count += 1
     return the_count
-
-
 # ###########  NOTHING to do below this row, it's pygame display stuff  ###########
 # ... but by all means have a look at it, it's fun!
 class NeighboursView:
