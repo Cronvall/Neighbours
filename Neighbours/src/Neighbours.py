@@ -49,7 +49,7 @@ def neighbours():
 class NeighboursModel:
     # Tune these numbers to test different distributions or update speeds
     FRAME_RATE = 20  # Increase number to speed simulation up
-    DIST = [0.4, 0.4, 0.20]  # % of RED, BLUE, and NONE
+    DIST = [0.4, 0.4, 0.2]  # % of RED, BLUE, and NONE
     THRESHOLD = 0.7  # % of surrounding neighbours that should be like me for satisfaction
 
     # ########### These following two methods are what you're supposed to implement  ###########
@@ -60,6 +60,8 @@ class NeighboursModel:
         # TODO Create and populate world according to self.DIST distribution parameters
         brave_new_world = create_world(30)
         populate_world(brave_new_world, NeighboursModel.DIST, int(30 * 30))
+        print(count(brave_new_world,Actor.BLUE))
+        print(count(brave_new_world,Actor.RED))
         return brave_new_world
 
     # This is the method called by the timer to update the world
@@ -121,35 +123,50 @@ def randomize_location(tot_spawns: int):
     position = random.randint(0, (world_size - 1))
     return position
 
-
+#The purpose of this function is to set the actor for each cell in "world"
+#This is made using a shuffled 1D list that is later turned into the 2D board "world"
 def populate_individual_cell(world: list, dist: list):
     n = SIZE * SIZE
     blue_amt = int(dist[0] * n)
     red_amt = int(dist[1] * n)
-    none_amt = n - red_amt - blue_amt
+    straight_world_list = []
 
-    for row in range(SIZE):
-        for col in range(SIZE):
-            if blue_amt > 0:
-                world[row][col] = Actor.BLUE
-                blue_amt -= 1
-            elif blue_amt == 0 and red_amt > 0:
-                world[row][col] = Actor.RED
-                red_amt -= 1
-            elif blue_amt == 0 and red_amt == 0:
-                world[row][col] = Actor.NONE
-            random.shuffle(world)
-            random.shuffle(world[row])
-        random.shuffle(world)
+    for cell in range(n):
+        if cell < blue_amt:
+            straight_world_list.append(Actor.BLUE)
+
+        elif cell >= blue_amt and cell < (blue_amt + red_amt):
+            straight_world_list.append(Actor.RED)
+
+        elif cell >= (blue_amt + red_amt) and cell < n:
+            straight_world_list.append(Actor.NONE)
+
+    shuffle_list(straight_world_list)
+
+    return  make_matrix(straight_world_list, world)
+
+#Shuffles a list
+def shuffle_list(_list :list):
+    random.shuffle(_list)
+
+#This method turns 1D lists into a 2D matrix
+#More specific for this project the "World"
+def make_matrix(Actors_list: list, world: list):
+    row = 0
+    col = 0
+    for  index in range(len(Actors_list)):
+        world[row][col] = Actors_list[index]
+        print("row: ", row, "col: ", col)
+        col += 1
+        if col >29:
+            row += 1
+            col = 0
+
+    return world
 
 
 def populate_world(world: list, distribution: list, tot_spawns: int):
-    # Distribution = [Red, blue, none]
     populate_individual_cell(world, distribution)
-
-    for row in world:
-        random.shuffle(world)
-        print(row)
 
 
 # Counts specified Actor around given coordinate
@@ -309,5 +326,5 @@ class NeighboursView:
 
 
 if __name__ == "__main__":
-    # neighbours()
+    neighbours()
     test()
