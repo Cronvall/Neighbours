@@ -58,10 +58,10 @@ class NeighboursModel:
     @staticmethod
     def __create_world(size) -> World:
         # TODO Create and populate world according to self.DIST distribution parameters
-        brave_new_world = create_world(30)
-        populate_world(brave_new_world, NeighboursModel.DIST, int(30 * 30))
-        print(count(brave_new_world,Actor.BLUE))
-        print(count(brave_new_world,Actor.RED))
+        brave_new_world = create_world(size)
+        populate_world(brave_new_world, NeighboursModel.DIST, int(size * size))
+        print(count(brave_new_world, Actor.BLUE))
+        print(count(brave_new_world, Actor.RED))
         return brave_new_world
 
     # This is the method called by the timer to update the world
@@ -123,8 +123,9 @@ def randomize_location(tot_spawns: int):
     position = random.randint(0, (world_size - 1))
     return position
 
-#The purpose of this function is to set the actor for each cell in "world"
-#This is made using a shuffled 1D list that is later turned into the 2D board "world"
+
+# The purpose of this function is to set the actor for each cell in "world"
+# This is made using a shuffled 1D list that is later turned into the 2D board "world"
 def populate_individual_cell(world: list, dist: list):
     n = SIZE * SIZE
     blue_amt = int(dist[0] * n)
@@ -143,22 +144,24 @@ def populate_individual_cell(world: list, dist: list):
 
     shuffle_list(straight_world_list)
 
-    return  make_matrix(straight_world_list, world)
+    return make_matrix(straight_world_list, world)
 
-#Shuffles a list
-def shuffle_list(_list :list):
+
+# Shuffles a list
+def shuffle_list(_list: list):
     random.shuffle(_list)
 
-#This method turns 1D lists into a 2D matrix
-#More specific for this project the "World"
+
+# This method turns 1D lists into a 2D matrix
+# More specific for this project the "World"
 def make_matrix(Actors_list: list, world: list):
     row = 0
     col = 0
-    for  index in range(len(Actors_list)):
+    for index in range(len(Actors_list)):
         world[row][col] = Actors_list[index]
         print("row: ", row, "col: ", col)
         col += 1
-        if col >29:
+        if col > 29:
             row += 1
             col = 0
 
@@ -242,6 +245,7 @@ def test():
     print(count_neighbors(test_world, 1, 0, Actor.RED) == 3)
     # Counts the Red Actors in the list. This value should be 3
     print(count(test_world, Actor.RED) == 3)
+    print(count(test_world, Actor.BLUE) == 2)
 
     exit(0)
 
@@ -250,10 +254,12 @@ def test():
 def count(a_list, to_find):
     the_count = 0
     for i in range(len(a_list)):
-        for a in a_list[i]:
-            if a == to_find:
+        for j in range(len(a_list[i])):
+            if a_list[i][j] == to_find:
                 the_count += 1
     return the_count
+
+
 # ###########  NOTHING to do below this row, it's pygame display stuff  ###########
 # ... but by all means have a look at it, it's fun!
 class NeighboursView:
@@ -327,4 +333,4 @@ class NeighboursView:
 
 if __name__ == "__main__":
     neighbours()
-    test()
+    # test()
