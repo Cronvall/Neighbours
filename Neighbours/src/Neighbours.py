@@ -58,7 +58,7 @@ class NeighboursModel:
     @staticmethod
     def __create_world(size) -> World:
         # TODO Create and populate world according to self.DIST distribution parameters
-        brave_new_world = create_world(size)
+        brave_new_world = create_world(size, Actor.NONE)
         populate_world(brave_new_world, NeighboursModel.DIST, int(size * size))
         print(count(brave_new_world, Actor.BLUE))
         print(count(brave_new_world, Actor.RED))
@@ -68,7 +68,16 @@ class NeighboursModel:
     # (i.e move unsatisfied) each "frame".
     def __update_world(self):
         # TODO Update logical state of world based on self.THRESHOLD satisfaction parameter
-        pass
+
+        satisfaction_world = create_world(len(self.world), State.NA)
+
+        for i in range(len(self.world)):
+            for j in range(len(self.world[i])):
+                satisfaction_neighbor(self.world, i, j, satisfaction_world, NeighboursModel.THRESHOLD)
+
+        print(satisfaction_world)
+
+        return self.world
 
     # ########### the rest of this class is already defined, to handle the simulation clock  ###########
     def __init__(self, size):
@@ -113,8 +122,8 @@ class NeighboursModel:
 
 
 # ---------------- Helper methods ---------------------
-def create_world(size: int):
-    new_world = [[Actor.NONE] * size for i in range(size)]
+def create_world(size: int, chosen_type):
+    new_world = [[chosen_type] * size for i in range(size)]
     return new_world
 
 
@@ -188,27 +197,46 @@ def count_neighbors(world: list, i: int, j: int, choice: Actor):
     return n_neighbors
 
 
+def n_neighbors_around(world_alive: list, i: int, j: int):
+    n_red = count_neighbors(world_alive, i, j, Actor.RED)
+    n_blue = count_neighbors(world_alive, i, j, Actor.BLUE)
+    total_n = n_red + n_blue
+    return total_n
+
+
+def satisfaction_neighbor(world_alive: list, i: int, j: int, satisfaction_world, thresh: float):
+    n_wanted: int = count_neighbors(world_alive, i, j, world_alive[i][j])
+    n_neighbors = n_neighbors_around(world_alive, i, j)
+
+    if world_alive[i][j] == Actor.NONE:
+        pass
+    elif n_wanted / n_neighbors <= thresh:
+        satisfaction_world[i][j] = State.UNSATISFIED
+    elif n_wanted / n_neighbors >= thresh:
+        satisfaction_world[i][j] = State.SATISFIED
+
+    pass
+
+
 # OBS! Väldigt väldigt dåligt namn på metod nedanför
 # Makes sure that given coordinate is within list
 def control_coordinate(world: list, k: int, l: int, choice: Actor):
+    # Outside world? No one lives there! Returns 0
     if k + 1 > len(world) or k < 0:
         return 0
     elif l + 1 > len(world) or l < 0:
         return 0
-    # If within the world and att specified location. Add one to the count
+    # If within the world and specified Actor at specified location? Add one to the count
     elif world[k][l] == choice:
         return 1
+    # Returning 'None' isn't wished. 0 is more like it
     else:
         return 0
 
 
 def copy_matrix(matrix_in: list):
     copied_matrix = []
-
-    for i in range(len(matrix_in)):
-        for j in range(len(matrix_in[i])):
-            copied_matrix = matrix_in[i][j]
-
+    copied_matrix = matrix_in
     return copied_matrix
 
 
@@ -223,6 +251,11 @@ def is_valid_location(size: int, row: int, col: int):
 # to see that they really work
 def test():
     # A small hard coded world for testing
+    unsatisfied_world = [
+        [State.NA, State.NA, State.NA],
+        [State.NA, State.NA, State.NA],
+        [State.NA, State.NA, State.NA],
+    ]
     test_world = [
         [Actor.RED, Actor.RED, Actor.NONE],
         [Actor.NONE, Actor.BLUE, Actor.NONE],
@@ -246,6 +279,16 @@ def test():
     # Counts the Red Actors in the list. This value should be 3
     print(count(test_world, Actor.RED) == 3)
     print(count(test_world, Actor.BLUE) == 2)
+
+    # Counts "living" neighbors around
+    print(n_neighbors_around(test_world, 0, 0) == 2)
+    print(n_neighbors_around(test_world, 1, 1) == 4)
+
+    # Will neighbors become unsatisfied/satisfied in the test world?
+    for i in range(len(test_world)):
+        for j in range(len(test_world)):
+            satisfaction_neighbor(test_world, i, j, unsatisfied_world, th)
+    print(unsatisfied_world)
 
     exit(0)
 
