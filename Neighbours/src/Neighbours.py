@@ -25,19 +25,7 @@ class State(Enum):
 
 
 World = List[List[Actor]]  # Type alias
-
-SIZE = 30
-
-
-# Reads n elements in a row starting at start_index.
-# Ex.(12, 3) reads the elements 12,13,14
-def read_row(row_index: int, col_index, n: int):
-    row = []
-    for x in range(n):
-        row.append(World[row_index[col_index + x]])
-        print(row)
-    return row
-
+SIZE = 16
 
 def neighbours():
     pg.init()
@@ -45,12 +33,17 @@ def neighbours():
     _view = NeighboursView(model)
     model.run()
 
+class Vector2():
+    def __init__(self, x: int,y:int):
+        self.x = x
+        self.y = y
+
 
 class NeighboursModel:
     # Tune these numbers to test different distributions or update speeds
     FRAME_RATE = 20  # Increase number to speed simulation up
     DIST = [0.4, 0.4, 0.2]  # % of RED, BLUE, and NONE
-    THRESHOLD = 0.7  # % of surrounding neighbours that should be like me for satisfaction
+    THRESHOLD = 0.5  # % of surrounding neighbours that should be like me for satisfaction
 
     # ########### These following two methods are what you're supposed to implement  ###########
     # In this method you should generate a new world
@@ -73,13 +66,59 @@ class NeighboursModel:
 
         for i in range(len(self.world)):
             for j in range(len(self.world[i])):
-                satisfaction_neighbor(self.world, i, j, satisfaction_world, NeighboursModel.THRESHOLD)
+                satisfaction_neighbour(self.world, i, j, satisfaction_world, NeighboursModel.THRESHOLD)
 
-        print(satisfaction_world)
+        self.world = self.move(satisfaction_world)
+        #return self.world
 
-        return self.world
+    def move(self, satisfaction_world):
+        NA_list = []
+        US_list = []
+        tmp_world = copy_matrix(self.world)
 
-    # ########### the rest of this class is already defined, to handle the simulation clock  ###########
+        for row in range(SIZE):
+            for col in range(SIZE):
+                if satisfaction_world[row][col] == State.NA:
+                    NA_list.append(Vector2(row,col))
+                elif satisfaction_world[row][col] == State.UNSATISFIED:
+                    US_list.append(Vector2(row,col))
+
+        random.shuffle(NA_list)
+        random.shuffle(US_list)
+        if len(US_list) >= len(NA_list):
+            self.move_Actors(NA_list, US_list, tmp_world)
+
+        elif len(US_list) < len(NA_list):
+            self.move_Actors(US_list, NA_list, tmp_world)
+
+        self.move_tests(NA_list,US_list, satisfaction_world)
+        return  tmp_world
+
+    def move_tests(self, NA_list, US_list, satisfaction_world):
+
+        print("NA_LIST LENGTH: ", len(NA_list))
+        print("US_LIST LENGTH: ", len(US_list))
+
+    def move_Actors(self, US_list, NA_list, tmp_world):
+
+        shorter_list = self.get_shorter_list(US_list, NA_list)
+
+        for i in range(len(shorter_list)):
+            current_US = US_list[i]
+            current_NA = NA_list[i]
+
+            tmp = tmp_world[current_NA.x][current_NA.y] #TOM -> TMP
+            tmp_world[current_NA.x][current_NA.y] = tmp_world[current_US.x][current_US.y] #TOM BLIR FÄRGAD
+            tmp_world[current_US.x][current_US.y] = tmp #FÄRGAD BLIR TOM
+
+    #Returns the shorter list of list_1 & 2
+    def get_shorter_list(self, list_1, list_2):
+        if len(list_1) <= len(list_2):
+            return list_1
+        else:
+            return list_2
+
+    ############ the rest of this class is already defined, to handle the simulation clock  ###########
     def __init__(self, size):
         self.world: World = self.__create_world(size)
         self.observers = []  # for enabling discoupled updating of the view, ignore
@@ -170,7 +209,7 @@ def make_matrix(Actors_list: list, world: list):
         world[row][col] = Actors_list[index]
         print("row: ", row, "col: ", col)
         col += 1
-        if col > 29:
+        if col > SIZE - 1:
             row += 1
             col = 0
 
@@ -204,16 +243,22 @@ def n_neighbors_around(world_alive: list, i: int, j: int):
     return total_n
 
 
-def satisfaction_neighbor(world_alive: list, i: int, j: int, satisfaction_world, thresh: float):
+def satisfaction_neighbour(world_alive: list, i: int, j: int, satisfaction_world, thresh: float):
     n_wanted: int = count_neighbors(world_alive, i, j, world_alive[i][j])
     n_neighbors = n_neighbors_around(world_alive, i, j)
-
-    if world_alive[i][j] == Actor.NONE:
+    n_ratio = 0
+    try:
+        n_ratio = n_wanted /n_neighbors
+    except:
+        #DO NOTHING
         pass
-    elif n_wanted / n_neighbors <= thresh:
-        satisfaction_world[i][j] = State.UNSATISFIED
-    elif n_wanted / n_neighbors >= thresh:
-        satisfaction_world[i][j] = State.SATISFIED
+    if n_ratio > 0:
+        if world_alive[i][j] == Actor.NONE:
+            pass
+        elif n_ratio <= thresh:
+            satisfaction_world[i][j] = State.UNSATISFIED
+        elif n_ratio >= thresh:
+            satisfaction_world[i][j] = State.SATISFIED
 
     pass
 
@@ -287,7 +332,7 @@ def test():
     # Will neighbors become unsatisfied/satisfied in the test world?
     for i in range(len(test_world)):
         for j in range(len(test_world)):
-            satisfaction_neighbor(test_world, i, j, unsatisfied_world, th)
+            satisfaction_neighbour(test_world, i, j, unsatisfied_world, th)
     print(unsatisfied_world)
 
     exit(0)
